@@ -1,6 +1,8 @@
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import type { TranscriptDetail, TranscriptListItem, TranscriptListResponse } from '../types/transcript';
+import type { TranscriptDetail, TranscriptListItem } from '../types/transcript';
+import { transcriptService } from '../api/services/transcriptService';
+import type { ApiError } from '../api/types';
 
 // Context type definition
 export interface TranscriptContextType {
@@ -8,20 +10,20 @@ export interface TranscriptContextType {
   transcripts: TranscriptListItem[];
   loadedTranscript: TranscriptDetail | null;
   isLoading: boolean;
-  error: string | null;
+  error: ApiError | string | null;
   
   // Actions
-  loadTranscripts: () => Promise<void>;
+  loadTranscripts: (params?: { page?: number; search?: string; status?: string; tags?: string[] }) => Promise<void>;
   loadTranscriptById: (id: string) => Promise<void>;
   clearLoadedTranscript: () => void;
-  setError: (error: string | null) => void;
+  setError: (error: ApiError | string | null) => void;
   setLoading: (loading: boolean) => void;
 }
 
 // Action types
 type TranscriptAction =
   | { type: 'SET_LOADING'; payload: boolean }
-  | { type: 'SET_ERROR'; payload: string | null }
+  | { type: 'SET_ERROR'; payload: ApiError | string | null }
   | { type: 'SET_TRANSCRIPTS'; payload: TranscriptListItem[] }
   | { type: 'SET_LOADED_TRANSCRIPT'; payload: TranscriptDetail | null }
   | { type: 'CLEAR_LOADED_TRANSCRIPT' };
@@ -31,7 +33,7 @@ interface TranscriptState {
   transcripts: TranscriptListItem[];
   loadedTranscript: TranscriptDetail | null;
   isLoading: boolean;
-  error: string | null;
+  error: ApiError | string | null;
 }
 
 const initialState: TranscriptState = {
@@ -70,116 +72,69 @@ interface TranscriptProviderProps {
 export const TranscriptProvider: React.FC<TranscriptProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(transcriptReducer, initialState);
 
-  // Mock API functions - replace with actual API calls
-  const mockLoadTranscripts = async (): Promise<TranscriptListResponse> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+  // Helper function to handle API errors
+  const handleApiError = useCallback((error: any): ApiError => {
+    if (error?.message) {
+      return {
+        message: error.message,
+        status: error.status,
+        code: error.code || 'NETWORK_ERROR',
+      };
+    }
     
     return {
-      count: 3,
-      next: null,
-      previous: null,
-      results: [
-        {
-          id: "5bea904f-ac09-45c3-8829-6b45bb2c9004",
-          title: "Mohammed_Ameera_Meetings",
-          summary: "Mohammed Zaghloul (msalahz)  0:05  \nHello, Ameera, can you hear me. Hello,\n\nMohammed Zaghloul (msalahz)  0:15  \nhello, Am. Mohammed Zaghloul (msalahz)  0:42  \nI.",
-          created_at: "2025-10-03T21:45:44.100731Z",
-          status: "Finished",
-          tags: [],
-          speaker_count: 2
-        },
-        {
-          id: "8cfd6d2e-7219-473b-8019-eb9e66e5c5a4",
-          title: "Meet 1",
-          summary: "Ameera Kawash  0:00  \nGet started, and then I'll explain a little bit more about what we are building and designing. Hulma  0:05  \nYeah, sure. Thank you.",
-          created_at: "2025-10-03T21:45:44.076262Z",
-          status: "Finished",
-          tags: [],
-          speaker_count: 3
-        },
-        {
-          id: "29e94b84-a78e-4fb2-8563-d04bdda983d7",
-          title: "Hulma_Interview",
-          summary: "Ameera Kawash  0:00  \nGet started, and then I'll explain a little bit more about what we are building and designing. Hulma  0:05  \nYeah, sure. Thank you.",
-          created_at: "2025-10-03T21:45:44.063923Z",
-          status: "Finished",
-          tags: [],
-          speaker_count: 3
-        }
-      ]
+      message: 'An unexpected error occurred',
+      code: 'UNKNOWN_ERROR',
     };
-  };
-
-  const mockLoadTranscriptById = async (id: string): Promise<TranscriptDetail> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Mock detailed transcript data
-    const mockTranscripts: Record<string, TranscriptDetail> = {
-      "5bea904f-ac09-45c3-8829-6b45bb2c9004": {
-        id: "5bea904f-ac09-45c3-8829-6b45bb2c9004",
-        title: "Mohammed_Ameera_Meetings",
-        content: "Mohammed Zaghloul (msalahz)  0:05  \nHello, Ameera, can you hear me. Hello,\n\nMohammed Zaghloul (msalahz)  0:15  \nhello, Am. Mohammed Zaghloul (msalahz)  0:42  \nI.",
-        summary: "Mohammed Zaghloul (msalahz)  0:05  \nHello, Ameera, can you hear me. Hello,\n\nMohammed Zaghloul (msalahz)  0:15  \nhello, Am. Mohammed Zaghloul (msalahz)  0:42  \nI.",
-        created_at: "2025-10-03T21:45:44.100731Z",
-        status: "Finished",
-        speakers: [
-          {
-            id: "0dbf7449-768a-419b-a9b2-f1616bc94aaa",
-            name: "Ameera Kawash",
-            speaking_percentage: 65.00893388921978
-          },
-          {
-            id: "b72f487b-5aa2-4e60-b164-17e4632e509a",
-            name: "Taha Shahzad",
-            speaking_percentage: 34.99106611078023
-          }
-        ],
-        transcript_tags: [],
-        tags: []
-      }
-    };
-
-    return mockTranscripts[id] || mockTranscripts["5bea904f-ac09-45c3-8829-6b45bb2c9004"];
-  };
+  }, []);
 
   // Context actions
-  const loadTranscripts = async (): Promise<void> => {
+  const loadTranscripts = useCallback(async (params?: { 
+    page?: number; 
+    search?: string; 
+    status?: string; 
+    tags?: string[] 
+  }): Promise<void> => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       
-      const response = await mockLoadTranscripts();
-      dispatch({ type: 'SET_TRANSCRIPTS', payload: response.results });
+      const response = await transcriptService.getTranscripts({
+        page: params?.page,
+        search: params?.search,
+        status: params?.status as any,
+        tags: params?.tags,
+      });
+      
+      dispatch({ type: 'SET_TRANSCRIPTS', payload: response.data.results });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to load transcripts' });
+      dispatch({ type: 'SET_ERROR', payload: handleApiError(error) });
     }
-  };
+  }, [handleApiError]);
 
-  const loadTranscriptById = async (id: string): Promise<void> => {
+  const loadTranscriptById = useCallback(async (id: string): Promise<void> => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
       
-      const transcript = await mockLoadTranscriptById(id);
-      dispatch({ type: 'SET_LOADED_TRANSCRIPT', payload: transcript });
+      const response = await transcriptService.getTranscriptById(id);
+      dispatch({ type: 'SET_LOADED_TRANSCRIPT', payload: response.data });
     } catch (error) {
-      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Failed to load transcript' });
+      dispatch({ type: 'SET_ERROR', payload: handleApiError(error) });
     }
-  };
+  }, [handleApiError]);
 
-  const clearLoadedTranscript = (): void => {
+  const clearLoadedTranscript = useCallback((): void => {
     dispatch({ type: 'CLEAR_LOADED_TRANSCRIPT' });
-  };
+  }, []);
 
-  const setError = (error: string | null): void => {
+  const setError = useCallback((error: ApiError | string | null): void => {
     dispatch({ type: 'SET_ERROR', payload: error });
-  };
+  }, []);
 
-  const setLoading = (loading: boolean): void => {
+  const setLoading = useCallback((loading: boolean): void => {
     dispatch({ type: 'SET_LOADING', payload: loading });
-  };
+  }, []);
 
   const contextValue: TranscriptContextType = {
     // State

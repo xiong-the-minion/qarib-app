@@ -5,6 +5,7 @@ import viteLogo from "/vite.svg";
 import FeatureCard from "./components/FeatureCard";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import { TranscriptProvider } from "./contexts/TranscriptContext";
+import { TranscriptsPage } from "./pages/TranscriptsPage";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -87,9 +88,17 @@ function App() {
                 />
               </div>
 
-              <p className="mt-12 text-gray-500 dark:text-gray-400">
-                {t("navigation.learnMore")}
-              </p>
+              <div className="mt-12 space-y-4">
+                <p className="text-gray-500 dark:text-gray-400">
+                  {t("navigation.learnMore")}
+                </p>
+                <button
+                  onClick={() => setShowTranscripts(true)}
+                  className="bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-green-300"
+                >
+                  Go to /transcripts
+                </button>
+              </div>
             </div>
           ) : (
             <div className="space-y-8">
@@ -104,6 +113,7 @@ function App() {
                   Back to Home
                 </button>
               </div>
+              <TranscriptsPage />
             </div>
           )}
         </div>
