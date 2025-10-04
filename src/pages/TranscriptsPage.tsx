@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useTranscript } from '../contexts/TranscriptContext';
 
 export const TranscriptsPage: React.FC = () => {
@@ -11,24 +11,20 @@ export const TranscriptsPage: React.FC = () => {
     loadTranscriptById 
   } = useTranscript();
 
-  const [selectedTranscriptId, setSelectedTranscriptId] = useState<string | null>(null);
-
   // Load transcripts on component mount
   useEffect(() => {
     loadTranscripts();
   }, [loadTranscripts]);
 
   const handleLoadTranscript = (id: string) => {
-    setSelectedTranscriptId(id);
     loadTranscriptById(id);
   };
 
   return (
-    <div style={{ 
-      padding: '20px', 
+    <div className="p-6" style={{ 
       fontFamily: 'monospace', 
-      backgroundColor: 'black', 
-      color: 'white',
+      backgroundColor: 'white', 
+      color: 'black',
       minHeight: '100vh'
     }}>
       <div>=== TRANSCRIPTS API TEST ===</div>
