@@ -1,0 +1,32 @@
+{
+  "welcome": {
+    "title": "Vite + React + TypeScript",
+    "subtitle": "مرحباً بك في تطبيق React الحديث"
+  },
+  "features": {
+    "vite": {
+      "title": "⚡ Vite",
+      "description": "أداة بناء سريعة وخادم تطوير مع HMR"
+    },
+    "react": {
+      "title": "⚛️ React",
+      "description": "مكتبة JavaScript لبناء واجهات المستخدم"
+    },
+    "tailwind": {
+      "title": "🎨 Tailwind",
+      "description": "إطار عمل CSS يعتمد على المرافق لتطوير واجهة المستخدم بسرعة"
+    }
+  },
+  "counter": {
+    "button": "العدد هو {{count}}",
+    "instructions": "قم بتحرير <code>src/App.tsx</code> واحفظ لاختبار HMR"
+  },
+  "navigation": {
+    "learnMore": "انقر على شعارات Vite و React لمعرفة المزيد"
+  },
+  "language": {
+    "switch": "تغيير اللغة",
+    "english": "English",
+    "arabic": "العربية"
+  }
+}

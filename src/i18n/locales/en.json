@@ -1,0 +1,32 @@
+{
+  "welcome": {
+    "title": "Vite + React + TypeScript",
+    "subtitle": "Welcome to your modern React application"
+  },
+  "features": {
+    "vite": {
+      "title": "⚡ Vite",
+      "description": "Lightning fast build tool and dev server with HMR"
+    },
+    "react": {
+      "title": "⚛️ React",
+      "description": "A JavaScript library for building user interfaces"
+    },
+    "tailwind": {
+      "title": "🎨 Tailwind",
+      "description": "Utility-first CSS framework for rapid UI development"
+    }
+  },
+  "counter": {
+    "button": "Count is {{count}}",
+    "instructions": "Edit <code>src/App.tsx</code> and save to test HMR"
+  },
+  "navigation": {
+    "learnMore": "Click on the Vite and React logos to learn more"
+  },
+  "language": {
+    "switch": "Switch Language",
+    "english": "English",
+    "arabic": "العربية"
+  }
+}
