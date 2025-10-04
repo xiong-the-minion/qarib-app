@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import LanguageSwitcher from "./components/LanguageSwitcher";
 import Layout from "./components/Layout";
 import { TranscriptProvider } from "./contexts/TranscriptContext";
 import { TranscriptsPage } from "./pages/TranscriptsPage";
@@ -34,7 +33,6 @@ function App() {
     <TranscriptProvider>
       <Router>
         <Layout>
-          <LanguageSwitcher />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/transcripts" element={<TranscriptsPage />} />

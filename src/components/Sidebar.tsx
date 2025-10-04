@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranscript } from '../contexts/TranscriptContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 // Import SVG icons directly as React components
 import HomeIcon from '/public/icons/home.svg?react';
@@ -247,6 +248,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                   </button>
                 ))}
               </nav>
+            </div>
+
+            {/* Language Switcher at Bottom */}
+            <div className="mt-auto p-4 border-t border-gray-200">
+              <LanguageSwitcher />
             </div>
           </div>
         </div>
