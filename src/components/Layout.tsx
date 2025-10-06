@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import { BreadCrumbs } from './BreadCrumbs';
 import { useTranscript } from '../contexts/TranscriptContext';
@@ -14,6 +15,7 @@ interface LayoutProps {
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const { loadedTranscript } = useTranscript();
@@ -29,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     if (path === '/') {
       return [
         { 
-          label: 'Home', 
+          label: t('sidebar.home'), 
           path: '/', 
           isActive: true,
           icon: <HomeIcon className="w-4 h-4" />
@@ -37,31 +39,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       ];
     } else if (path === '/transcripts') {
       return [
-        { label: 'Home', path: '/' },
-        { label: 'Transcripts', isActive: true }
+        { label: t('sidebar.home'), path: '/' },
+        { label: t('sidebar.transcripts'), isActive: true }
       ];
     } else if (path.startsWith('/transcripts/')) {
       const transcriptId = path.split('/')[2];
       const transcriptName = loadedTranscript?.title || `Transcript ${transcriptId}`;
       return [
-        { label: 'Home', path: '/' },
-        { label: 'Transcripts', path: '/transcripts' },
+        { label: t('sidebar.home'), path: '/' },
+        { label: t('sidebar.transcripts'), path: '/transcripts' },
         { label: transcriptName, isActive: true }
       ];
     }
     
     // Default breadcrumbs
     return [
-      { label: 'Home', path: '/' },
+      { label: t('sidebar.home'), path: '/' },
       { label: 'Page', isActive: true }
     ];
   };
 
   return (
-    <div className="h-screen p-4" style={{
+    <div className="h-screen bg-[#F9F9F9] p-4" style={{
       backgroundImage: 'url(/bg/app-bg.svg)',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
+      backgroundSize: '150%',
+      backgroundPosition: 'top left',
       backgroundRepeat: 'no-repeat'
     }}>
       <div className="flex h-full">
@@ -97,7 +99,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             ) : (
               // New Transcript button for transcript list pages
               <button className="bg-[#1D3557] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:brightness-125 transition-colors">
-                <span>New Transcript</span>
+                <span>{t('transcripts.newTranscript')}</span>
                 <ChevronDownIcon className="w-4 h-4" />
               </button>
             )}

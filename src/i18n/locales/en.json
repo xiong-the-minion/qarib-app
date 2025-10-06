@@ -28,5 +28,81 @@
     "switch": "Switch Language",
     "english": "English",
     "arabic": "العربية"
+  },
+  "sidebar": {
+    "home": "Home",
+    "transcripts": "Transcripts",
+    "projects": "Projects",
+    "favorites": "Favorites",
+    "tags": "Tags",
+    "settings": "Settings"
+  },
+  "transcripts": {
+    "title": "Cameron Transcripts",
+    "newTranscript": "New Transcript",
+    "addNew": "+ Add new",
+    "loading": "Loading transcripts...",
+    "error": "Error loading transcripts",
+    "empty": "No transcripts found",
+    "columns": {
+      "name": "Name",
+      "agenda": "Agenda", 
+      "speakers": "Speakers",
+      "status": "Status",
+      "duration": "Duration",
+      "date": "Date"
+    },
+    "status": {
+      "processing": "Processing",
+      "finished": "Finished",
+      "failed": "Failed"
+    },
+    "viewOptions": {
+      "table": "Table",
+      "gallery": "Gallery",
+      "calendar": "Calendar",
+      "list": "List",
+      "feed": "Feed"
+    },
+    "filters": {
+      "today": "Today",
+      "week": "W",
+      "month": "M",
+      "year": "Y",
+      "speaker": "Speaker",
+      "tags": "Tags"
+    }
+  },
+  "transcriptDetail": {
+    "copy": "Copy",
+    "copyComplete": "Copy Complete Transcript",
+    "copyDialogue": "Copy Dialogue",
+    "tabs": {
+      "summary": "Summary",
+      "transcript": "Transcript",
+      "screenshot": "Screenshot"
+    },
+    "sections": {
+      "participants": "Participants",
+      "keywords": "Keywords"
+    },
+    "loading": "Loading transcript...",
+    "error": "Error loading transcript",
+    "notFound": "Transcript not found"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "refresh": "Refresh"
   }
 }

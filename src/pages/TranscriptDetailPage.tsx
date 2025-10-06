@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranscript } from "../contexts/TranscriptContext";
+import { useTranslation } from "react-i18next";
 import {
   SummarySection,
   ParticipantsSection,
@@ -14,6 +15,7 @@ import { copyToClipboard, formatCompleteTranscript } from "../utils/copyUtils";
 import CopyIcon from "/public/icons/copy.svg?react";
 
 export const TranscriptDetailPage: React.FC = () => {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { loadedTranscript, isLoading, error, loadTranscriptById } =
@@ -30,13 +32,50 @@ export const TranscriptDetailPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen ">
-        <div className="animate-pulse">
-          <div className="h-16 "></div>
-          <div className="p-6">
-            <div className="h-8  rounded w-1/3 mb-4"></div>
-            <div className="h-4  rounded w-1/2 mb-2"></div>
-            <div className="h-4  rounded w-3/4 mb-4"></div>
+      <div className="px-12 min-h-screen">
+        {/* Loading Header */}
+        <div className="px-6 pb-4">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="h-6 bg-gray-200 rounded w-24"></div>
+                <div className="h-6 bg-gray-200 rounded w-16"></div>
+                <div className="h-6 bg-gray-200 rounded w-20"></div>
+              </div>
+              <div className="h-8 bg-gray-200 rounded w-24"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Loading Content */}
+        <div className="flex flex-col gap-6 pt-[60px] pb-6 px-[120px]">
+          {/* Meeting Header Skeleton */}
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/2 mb-4"></div>
+            <div className="flex items-center space-x-4 mb-4">
+              <div className="h-6 bg-gray-200 rounded w-20"></div>
+              <div className="h-6 bg-gray-200 rounded w-16"></div>
+              <div className="h-6 bg-gray-200 rounded w-24"></div>
+            </div>
+          </div>
+
+          {/* Tabs Skeleton */}
+          <div className="animate-pulse">
+            <div className="flex space-x-6 border-b border-gray-200">
+              <div className="h-8 bg-gray-200 rounded w-20"></div>
+              <div className="h-8 bg-gray-200 rounded w-24"></div>
+              <div className="h-8 bg-gray-200 rounded w-28"></div>
+            </div>
+          </div>
+
+          {/* Content Skeleton */}
+          <div className="animate-pulse space-y-6">
+            <div className="h-4 bg-gray-200 rounded w-full"></div>
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+            <div className="h-4 bg-gray-200 rounded w-4/5"></div>
           </div>
         </div>
       </div>
@@ -48,7 +87,7 @@ export const TranscriptDetailPage: React.FC = () => {
       <div className="min-h-screen  flex items-center justify-center">
         <div className="p-8 max-w-md w-full mx-4">
           <h2 className="text-xl font-semibold text-red-800 mb-4">
-            Error Loading Transcript
+            {t('transcriptDetail.error')}
           </h2>
           <p className="text-red-600 mb-6">
             {typeof error === "string" ? error : error.message}
@@ -57,7 +96,7 @@ export const TranscriptDetailPage: React.FC = () => {
             onClick={() => navigate("/transcripts")}
             className="w-full px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
           >
-            Back to Transcripts
+            {t('common.retry')}
           </button>
         </div>
       </div>
@@ -207,9 +246,9 @@ export const TranscriptDetailPage: React.FC = () => {
           {/* Tabs */}
           <div className="flex gap-3 mb-3">
             {[
-              { id: "summary", label: "Summary" },
-              { id: "transcript", label: "Transcript" },
-              { id: "screenshot", label: "Screenshot" },
+              { id: "summary", label: t('transcriptDetail.tabs.summary') },
+              { id: "transcript", label: t('transcriptDetail.tabs.transcript') },
+              { id: "screenshot", label: t('transcriptDetail.tabs.screenshot') },
             ].map((tab) => (
               <button
                 key={tab.id}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Import icons
 import StarIcon from "/public/icons/favourites.svg?react";
@@ -42,7 +43,9 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
   onTranscriptClick,
 }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const toggleFavorite = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -70,6 +73,19 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
     }
   };
 
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case "Processing":
+        return t('transcripts.status.processing');
+      case "Finished":
+        return t('transcripts.status.finished');
+      case "Failed":
+        return t('transcripts.status.failed');
+      default:
+        return status;
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -83,6 +99,18 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
     // Mock duration since it's not in the API
     return "17:00 -17:30 PM";
   };
+
+  // Filter transcripts based on search query
+  const filteredTranscripts = transcripts.filter((transcript) => {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase();
+    return (
+      transcript.title.toLowerCase().includes(query) ||
+      transcript.summary?.toLowerCase().includes(query) ||
+      transcript.status.toLowerCase().includes(query)
+    );
+  });
 
   const generateMockSpeakers = (speakerCount: number) => {
     const names = [
@@ -111,7 +139,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-between space-x-4 w-full">
             <h2 className="text-2xl font-bold text-gray-900">
-              Cameron Transcripts
+              {t('transcripts.title')}
             </h2>
 
             {/* View Options */}
@@ -119,33 +147,33 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
               {[
                 {
                   id: "table",
-                  label: "Table",
+                  label: t('transcripts.viewOptions.table'),
                   icon: <TableIcon className="w-4 h-4" />,
                 },
                 {
                   id: "gallery",
-                  label: "Gallery",
+                  label: t('transcripts.viewOptions.gallery'),
                   icon: <GalleryIcon className="w-4 h-4" />,
                 },
                 {
                   id: "calendar",
-                  label: "Calendar",
+                  label: t('transcripts.viewOptions.calendar'),
                   icon: <CalendarIcon className="w-4 h-4" />,
                 },
                 {
                   id: "list",
-                  label: "List",
+                  label: t('transcripts.viewOptions.list'),
                   icon: <ListIcon className="w-4 h-4" />,
                 },
                 {
                   id: "feed",
-                  label: "Feed",
+                  label: t('transcripts.viewOptions.feed'),
                   icon: <FeedIcon className="w-4 h-4" />,
                 },
               ].map((view) => (
                 <button
                   key={view.id}
-                  className={`px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2.5 ${
+                  className={`px-3 py-2 rounded-full text-sm font-medium flex items-center gap-2.5 cursor-pointer ${
                     view.id === "table"
                       ? "bg-[#A8DADC]/25 text-[#1D3557]"
                       : "text-gray-500 bg-white"
@@ -162,9 +190,34 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
         {/* Filter Bar */}
         <div className="flex items-center justify-between mt-4">
           <div className="flex items-center space-x-4">
+            {/* Search Input */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder={t('common.search') + ' ' + t('transcripts.title').toLowerCase() + '...'}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 w-64 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg
+                  className="h-4 w-4 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+            </div>
             {/* Date Navigation */}
             <div className="flex items-center space-x-2 h-8 bg-white rounded-lg border border-gray-400/20">
-              <button className="p-1 hover:bg-gray-100 rounded">
+              <button className="p-1 hover:bg-gray-100 rounded cursor-pointer">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -182,7 +235,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
               <span className="text-sm font-medium text-gray-700">
                 17.08.2025
               </span>
-              <button className="p-1 hover:bg-gray-100 rounded">
+              <button className="p-1 hover:bg-gray-100 rounded cursor-pointer">
                 <svg
                   className="w-4 h-4"
                   fill="none"
@@ -201,12 +254,17 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
 
             {/* Quick Date Filters */}
             <div className="flex items-center gap-1">
-              {["Today", "W", "M", "Y"].map((filter) => (
+              {[
+                { key: "today", label: t('transcripts.filters.today') },
+                { key: "week", label: t('transcripts.filters.week') },
+                { key: "month", label: t('transcripts.filters.month') },
+                { key: "year", label: t('transcripts.filters.year') }
+              ].map((filter) => (
                 <button
-                  key={filter}
-                  className="h-8 px-3 text-xs font-medium text-gray-500 bg-white hover:bg-gray-100 rounded-lg"
+                  key={filter.key}
+                  className="h-8 px-3 text-xs font-medium text-gray-500 bg-white hover:bg-gray-100 rounded-lg cursor-pointer"
                 >
-                  {filter}
+                  {filter.label}
                 </button>
               ))}
             </div>
@@ -214,17 +272,17 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
             {/* Dropdowns */}
             <div className="flex items-center space-x-2">
               <select className="px-3 py-1 text-sm border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option>Speaker</option>
+                <option>{t('transcripts.filters.speaker')}</option>
               </select>
               <select className="px-3 py-1 text-sm border bg-white border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                <option>Tags</option>
+                <option>{t('transcripts.filters.tags')}</option>
               </select>
             </div>
           </div>
 
           {/* Action Icons */}
           <div className="flex items-center space-x-2">
-            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded">
+            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded cursor-pointer">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -239,7 +297,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 />
               </svg>
             </button>
-            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded">
+            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded cursor-pointer">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -254,7 +312,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 />
               </svg>
             </button>
-            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded">
+            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded cursor-pointer">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -275,7 +333,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 />
               </svg>
             </button>
-            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded">
+            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded cursor-pointer">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -308,7 +366,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 <div className="h-full flex items-center">
                   <div className="flex items-center space-x-2">
                     <NameIcon className="w-5 h-5" />
-                    <span>Name</span>
+                    <span>{t('transcripts.columns.name')}</span>
                   </div>
                 </div>
               </th>
@@ -316,7 +374,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 <div className="h-full flex items-center">
                   <div className="flex items-center space-x-2">
                     <AgendaIcon className="w-5 h-5" />
-                    <span>Agenda</span>
+                    <span>{t('transcripts.columns.agenda')}</span>
                   </div>
                 </div>
               </th>
@@ -324,7 +382,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 <div className="h-full flex items-center">
                   <div className="flex items-center space-x-2">
                     <SpeakersIcon className="w-5 h-5" />
-                    <span>Speakers</span>
+                    <span>{t('transcripts.columns.speakers')}</span>
                   </div>
                 </div>
               </th>
@@ -332,7 +390,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 <div className="h-full flex items-center">
                   <div className="flex items-center space-x-2">
                     <StatusIcon className="w-5 h-5" />
-                    <span>Status</span>
+                    <span>{t('transcripts.columns.status')}</span>
                   </div>
                 </div>
               </th>
@@ -340,7 +398,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 <div className="h-full flex items-center">
                   <div className="flex items-center space-x-2">
                     <DurationIcon className="w-5 h-5" />
-                    <span>Duration</span>
+                    <span>{t('transcripts.columns.duration')}</span>
                   </div>
                 </div>
               </th>
@@ -348,7 +406,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                 <div className="h-full flex items-center">
                   <div className="flex items-center space-x-2">
                     <DateIcon className="w-5 h-5" />
-                    <span>Date</span>
+                    <span>{t('transcripts.columns.date')}</span>
                   </div>
                 </div>
               </th>
@@ -363,7 +421,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
             </tr>
           </thead>
           <tbody className="bg-white">
-            {transcripts.map((transcript, index) => {
+            {filteredTranscripts.map((transcript, index) => {
               const mockSpeakers = generateMockSpeakers(
                 transcript.speaker_count
               );
@@ -380,7 +438,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                     <div className="h-full flex items-center">
                       <button
                         onClick={(e) => toggleFavorite(transcript.id, e)}
-                        className="text-gray-400 hover:text-yellow-500"
+                        className="text-gray-400 hover:text-yellow-500 cursor-pointer"
                       >
                         <StarIcon
                           className={`w-4 h-4 ${
@@ -407,7 +465,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                   </td>
                   <td className="px-6 h-[90px] border-r border-gray-200">
                     <div className="h-full flex items-center">
-                      <div className="text-sm text-gray-900 max-w-xs truncate">
+                      <div className="text-sm text-gray-900 max-w-sm line-clamp-3">
                         {transcript.summary || "No summary available"}
                       </div>
                     </div>
@@ -449,7 +507,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                           transcript.status
                         )}`}
                       >
-                        {transcript.status}
+                        {getStatusText(transcript.status)}
                       </span>
                     </div>
                   </td>
@@ -475,7 +533,7 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
                   </td>
                   <td className="px-6 h-[90px] whitespace-nowrap">
                     <div className="h-full flex items-center">
-                      <button className="text-gray-400 hover:text-gray-600">
+                      <button className="text-gray-400 hover:text-gray-600 cursor-pointer">
                         <PlusIcon className="w-4 h-4" />
                       </button>
                     </div>
@@ -489,9 +547,9 @@ export const TranscriptsTable: React.FC<TranscriptsTableProps> = ({
 
       {/* Add New Row */}
       <div className="px-6 py-4">
-        <button className="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900">
+        <button className="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900 cursor-pointer">
           <PlusIcon className="w-4 h-4" />
-          <span>+ Add new</span>
+          <span>{t('transcripts.addNew')}</span>
         </button>
       </div>
     </div>

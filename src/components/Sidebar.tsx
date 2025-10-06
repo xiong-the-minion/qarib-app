@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranscript } from '../contexts/TranscriptContext';
+import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './LanguageSwitcher';
 
 // Import SVG icons directly as React components
@@ -21,6 +22,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
+  const { t } = useTranslation();
   const [activeItem, setActiveItem] = useState('Home');
   const [expandedItems, setExpandedItems] = useState<string[]>(['Transcriptions']);
   const navigate = useNavigate();
@@ -77,16 +79,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
   };
 
   const mainNavItems = [
-    { id: 'Home', icon: 'home', label: 'Home', hasSubmenu: false },
-    { id: 'Transcriptions', icon: 'transcriptions', label: 'Transcriptions', hasSubmenu: true },
-    { id: 'Tags', icon: 'tags', label: 'Tags', hasSubmenu: true },
-    { id: 'Projects', icon: 'projects', label: 'Projects', hasSubmenu: true },
-    { id: 'Favourites', icon: 'favourites', label: 'Favourites', hasSubmenu: true },
+    { id: 'Home', icon: 'home', label: t('sidebar.home'), hasSubmenu: false },
+    { id: 'Transcriptions', icon: 'transcriptions', label: t('sidebar.transcripts'), hasSubmenu: true },
+    { id: 'Tags', icon: 'tags', label: t('sidebar.tags'), hasSubmenu: true },
+    { id: 'Projects', icon: 'projects', label: t('sidebar.projects'), hasSubmenu: true },
+    { id: 'Favourites', icon: 'favourites', label: t('sidebar.favorites'), hasSubmenu: true },
   ];
 
   const systemNavItems = [
-    { id: 'Settings', icon: 'settings', label: 'Settings', hasSubmenu: false },
-    { id: 'Trash', icon: 'trash', label: 'Trash', hasSubmenu: false },
+    { id: 'Settings', icon: 'settings', label: t('sidebar.settings'), hasSubmenu: false },
+    { id: 'Trash', icon: 'trash', label: t('common.delete'), hasSubmenu: false },
   ];
 
   return (

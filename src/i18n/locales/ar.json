@@ -28,5 +28,81 @@
     "switch": "تغيير اللغة",
     "english": "English",
     "arabic": "العربية"
+  },
+  "sidebar": {
+    "home": "الرئيسية",
+    "transcripts": "المحاضر",
+    "projects": "المشاريع",
+    "favorites": "المفضلة",
+    "tags": "العلامات",
+    "settings": "الإعدادات"
+  },
+  "transcripts": {
+    "title": "محاضر كاميرون",
+    "newTranscript": "محضر جديد",
+    "addNew": "+ إضافة جديد",
+    "loading": "جاري تحميل المحاضر...",
+    "error": "خطأ في تحميل المحاضر",
+    "empty": "لم يتم العثور على محاضر",
+    "columns": {
+      "name": "الاسم",
+      "agenda": "جدول الأعمال",
+      "speakers": "المتحدثون",
+      "status": "الحالة",
+      "duration": "المدة",
+      "date": "التاريخ"
+    },
+    "status": {
+      "processing": "قيد المعالجة",
+      "finished": "مكتمل",
+      "failed": "فشل"
+    },
+    "viewOptions": {
+      "table": "جدول",
+      "gallery": "معرض",
+      "calendar": "تقويم",
+      "list": "قائمة",
+      "feed": "تغذية"
+    },
+    "filters": {
+      "today": "اليوم",
+      "week": "أ",
+      "month": "ش",
+      "year": "س",
+      "speaker": "متحدث",
+      "tags": "علامات"
+    }
+  },
+  "transcriptDetail": {
+    "copy": "نسخ",
+    "copyComplete": "نسخ المحضر الكامل",
+    "copyDialogue": "نسخ الحوار",
+    "tabs": {
+      "summary": "ملخص",
+      "transcript": "المحضر",
+      "screenshot": "لقطة شاشة"
+    },
+    "sections": {
+      "participants": "المشاركون",
+      "keywords": "الكلمات المفتاحية"
+    },
+    "loading": "جاري تحميل المحضر...",
+    "error": "خطأ في تحميل المحضر",
+    "notFound": "المحضر غير موجود"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "retry": "إعادة المحاولة",
+    "close": "إغلاق",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تحرير",
+    "view": "عرض",
+    "search": "بحث",
+    "filter": "تصفية",
+    "sort": "ترتيب",
+    "refresh": "تحديث"
   }
 }
