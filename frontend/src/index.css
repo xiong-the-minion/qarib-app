@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+/* RTL Support */
+[dir="rtl"] {
+  direction: rtl;
+}
+
+[dir="ltr"] {
+  direction: ltr;
+}
+
+/* RTL-specific styles */
+[dir="rtl"] .space-x-8 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+[dir="rtl"] .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* Arabic font support */
+[lang="ar"] {
+  font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+}
+
+/* Smooth transitions for language switching */
+* {
+  transition: all 0.3s ease;
+}
+
+/* Subtle scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+}
+
+/* Dark mode scrollbar support */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: rgba(75, 85, 99, 0.4);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(75, 85, 99, 0.6);
+  }
+  
+  ::-webkit-scrollbar-thumb:active {
+    background: rgba(75, 85, 99, 0.8);
+  }
+  
+  * {
+    scrollbar-color: rgba(75, 85, 99, 0.4) transparent;
+  }
+}
