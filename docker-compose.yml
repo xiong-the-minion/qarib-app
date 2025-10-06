@@ -1,0 +1,58 @@
+services:
+  backend:
+    build: ./backend
+    container_name: qarib-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - backend_media:/app/public/assets
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=config.settings
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py import_transcripts &&
+             python manage.py runserver 0.0.0.0:8000"
+    networks:
+      - qarib-network
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: qarib-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - qarib-network
+    restart: unless-stopped
+
+  # Development frontend (optional - for hot reloading)
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: qarib-frontend-dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - qarib-network
+    profiles:
+      - dev
+    restart: unless-stopped
+
+volumes:
+  backend_media:
+
+networks:
+  qarib-network:
+    driver: bridge

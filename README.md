@@ -1,218 +1,168 @@
-# Qarib App - Transcript Management System
+# Qarib App - Bilingual Meeting Intelligence Platform
 
-A modern React application for managing meeting transcripts with advanced features like real-time search, multi-language support, and interactive data visualization.
+A full-stack application for meeting intelligence and knowledge production with support for Arabic and English. Built with Django REST Framework backend and React/Vite frontend, featuring automatic transcript analysis, tag generation, and speaker identification.
 
-## 🚀 Project Overview
-
-Qarib App is a comprehensive transcript management system built with modern web technologies. It provides an intuitive interface for viewing, searching, and managing meeting transcripts with features like:
-
-- 📝 **Transcript Management** - View, search, and organize meeting transcripts
-- 🔍 **Advanced Search** - Real-time local search across transcript content
-- 🌍 **Multi-language Support** - Full Arabic and English translation support
-- 📊 **Data Visualization** - Interactive tables with sorting and filtering
-- ⭐ **Favorites System** - Mark and manage favorite transcripts
-- 🏷️ **Tag Management** - Organize transcripts with custom tags
-- 📱 **Responsive Design** - Works seamlessly on all device sizes
-
-## 🛠️ Development Process
-
-This project was developed using **Cursor AI** as the primary development environment, which significantly accelerated the development process:
-
-- **Project Setup** - Initial project scaffolding and configuration
-- **Library Integration** - Seamless integration of React Router, i18next, and other libraries
-- **Translation Implementation** - Complete Arabic/English translation system setup
-- **Component Development** - Rapid development of complex UI components
-- **Code Optimization** - AI-assisted code refactoring and optimization
-
-### Library Versioning Challenges
-
-During development, we encountered several library versioning issues that were resolved with the help of **Claude AI**:
-
-- **React Router v6** - Migration from older routing patterns
-- **i18next Configuration** - Complex internationalization setup
-- **TypeScript Integration** - Type definitions for SVG imports and custom components
-- **Tailwind CSS** - Custom configuration for RTL support and complex layouts
-
-## 🏗️ Architecture & Technologies
-
-### Core Technologies
-- ⚡ **Vite** - Lightning fast build tool and dev server
-- ⚛️ **React 18** - Latest React with TypeScript support
-- 🎨 **Tailwind CSS** - Utility-first CSS framework with RTL support
-- 📦 **TypeScript** - Type-safe JavaScript development
-- 🌍 **i18next** - Internationalization framework for multi-language support
-
-### Key Libraries
-- **React Router v6** - Client-side routing and navigation
-- **React i18next** - Translation management and language switching
-- **Context API** - State management for transcripts and user preferences
-- **SVG as React Components** - Optimized icon system
-
-### Features
-- 🎯 TypeScript for type safety
-- 🎨 Tailwind CSS with custom RTL support
-- 🌍 Complete Arabic/English translation
-- 🔍 Real-time search functionality
-- ⚡ Optimized performance
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (version 16 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Development
-
-Start the development server:
+## Quick Setup
 
 ```bash
+# Clone and start
+git clone https://github.com/xiong-the-minion/qarib-app.git
+cd qarib-app
+docker-compose build
+docker-compose up -d
+
+# Access the application
+# Frontend: http://localhost:8080
+# Backend API: http://localhost:8000
+```
+
+## Development Setup
+
+### Using Docker (Recommended)
+```bash
+# Start with hot reloading
+docker-compose --profile dev up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+### Manual Setup
+```bash
+# Backend
+cd backend
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py import_transcripts
+python manage.py runserver
+
+# Frontend (in another terminal)
+cd frontend
+npm install
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+## AI Tools Used
 
-### Build
+**Cursor AI** - Primary IDE for code editing, refactoring, and real-time assistance with code completion and error detection.
 
-Build the project for production:
+**Claude (Anthropic)** - Architecture planning, code generation, problem solving, documentation, and Docker configuration.
+
+The development workflow involved using Cursor for rapid development and immediate feedback, while Claude handled complex problem-solving and architectural decisions. Both tools worked together iteratively with real-time testing and validation.
+
+## Time Breakdown
+
+- **Backend Development**: ~45 minutes
+- **Frontend Development**: ~4 hours  
+- **Docker Setup**: ~30 minutes
+- **Total Development Time**: ~5.25 hours
+
+## Architecture
+
+### Backend (Django REST Framework)
+- Models: Transcript, Speaker, Tag, TranscriptTag
+- RESTful API endpoints with automatic serialization
+- Automatic tag generation based on content analysis
+- Speaker identification and percentage calculation
+- Bilingual support with CORS configuration
+- Management commands for data import
+
+### Frontend (React + Vite)
+- React 19 with TypeScript
+- Tailwind CSS for styling
+- React Context API for state management
+- react-i18next for Arabic/English support
+- Vite for fast development and building
+
+### Database
+- Development: SQLite (included)
+
+## Docker Commands
 
 ```bash
-npm run build
+# Build all images
+docker-compose build
+
+# Start all services
+docker-compose up -d
+
+# Start with development frontend (hot reloading)
+docker-compose --profile dev up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+
+# Clean up everything
+docker-compose down -v --remove-orphans
 ```
 
-### Preview
+## Known Limitations
 
-Preview the production build:
+**Current Limitations**
+- Using SQLite for development (not production-ready for scale)
+- No user authentication system implemented
+- No file upload interface (transcripts imported via management command)
+- No WebSocket support for live updates
+- Basic error handling (needs improvement for production)
+- Limited test coverage (unit tests not implemented)
+- No caching or optimization for large datasets
+- Basic CORS setup (needs hardening for production)
 
+**Technical Debt**
+- Some TypeScript type definitions could be more strict
+- Generic error messages (need user-friendly messages)
+- Basic loading indicators (could be more sophisticated)
+
+**Scalability Considerations**
+- SQLite won't scale beyond single server
+- Local file storage (needs cloud storage for production)
+- No logging or monitoring system
+- No backup strategy
+
+## Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+# Django Settings
+DEBUG=1
+SECRET_KEY=your-secret-key-here
+ALLOWED_HOSTS=localhost,127.0.0.1,backend,frontend
+
+# Database
+DATABASE_URL=sqlite:///db.sqlite3
+
+# CORS Settings
+CORS_ALLOWED_ORIGINS=http://localhost:8080,http://localhost:5173
+```
+
+## API Endpoints
+
+### Transcripts
+- `GET /api/transcripts/` - List all transcripts
+- `GET /api/transcripts/{id}/` - Get specific transcript
+
+### Management Commands
 ```bash
-npm run preview
+# Import sample transcripts
+docker-compose exec backend python manage.py import_transcripts
+
+# Run migrations
+docker-compose exec backend python manage.py migrate
+
+# Create superuser
+docker-compose exec backend python manage.py createsuperuser
 ```
 
-## 📁 Project Structure
+## Browser Support
 
-```
-src/
-├── components/                    # Reusable UI components
-│   ├── Layout.tsx                # Main layout wrapper
-│   ├── Sidebar.tsx               # Navigation sidebar
-│   ├── BreadCrumbs.tsx           # Navigation breadcrumbs
-│   ├── LanguageSwitcher.tsx      # Language toggle component
-│   ├── TranscriptsTable.tsx      # Main transcripts table
-│   └── transcript/               # Transcript-specific components
-│       ├── TranscriptSection.tsx
-│       ├── SummarySection.tsx
-│       ├── ParticipantsSection.tsx
-│       └── KeywordsSection.tsx
-├── pages/                        # Page components
-│   ├── TranscriptsPage.tsx       # Transcripts list page
-│   └── TranscriptDetailPage.tsx  # Individual transcript view
-├── contexts/                     # React Context providers
-│   └── TranscriptContext.tsx     # Transcript data management
-├── hooks/                        # Custom React hooks
-├── utils/                        # Utility functions
-│   ├── copyUtils.ts              # Clipboard functionality
-│   └── transcriptUtils.ts        # Transcript data processing
-├── i18n/                         # Internationalization
-│   ├── index.ts                  # i18n configuration
-│   └── locales/                  # Translation files
-│       ├── en.json               # English translations
-│       └── ar.json               # Arabic translations
-├── types/                        # TypeScript type definitions
-│   ├── transcript.ts             # Transcript data types
-│   └── svg.d.ts                  # SVG import types
-├── api/                          # API integration
-│   ├── client.ts                 # HTTP client
-│   ├── config.ts                 # API configuration
-│   ├── types.ts                  # API type definitions
-│   └── services/
-│       └── transcriptService.ts  # Transcript API calls
-├── App.tsx                       # Main App component
-├── main.tsx                      # Application entry point
-└── index.css                     # Global styles with Tailwind
-```
-
-## 🛠️ Technologies Used
-
-### Frontend Framework
-- **React 18** - Modern React with hooks and functional components
-- **TypeScript** - Full type safety and IntelliSense support
-- **Vite** - Lightning-fast build tool and development server
-
-### Styling & UI
-- **Tailwind CSS** - Utility-first CSS with custom RTL configuration
-- **Custom Components** - Reusable, accessible UI components
-- **SVG Icons** - Optimized SVG icons as React components
-
-### State Management & Routing
-- **React Context API** - Global state management for transcripts
-- **React Router v6** - Modern client-side routing
-- **Custom Hooks** - Reusable state logic
-
-### Internationalization
-- **i18next** - Professional internationalization framework
-- **React i18next** - React integration for translations
-- **RTL Support** - Complete right-to-left language support
-
-### Development Tools
-- **ESLint** - Code linting and formatting
-- **PostCSS** - CSS processing and optimization
-- **TypeScript** - Type checking and development experience
-
-## 🤖 AI-Assisted Development
-
-This project showcases the power of AI-assisted development using **Cursor** and **Claude**:
-
-### Development Acceleration
-- **Rapid Prototyping** - Quick iteration from concept to working features
-- **Code Generation** - Efficient component and utility function creation
-- **Bug Resolution** - Fast identification and fixing of issues
-- **Refactoring** - Seamless code optimization and restructuring
-
-### Translation Implementation
-- **Complete i18n Setup** - Full internationalization framework configuration
-- **Translation Management** - Systematic approach to multi-language support
-- **RTL Support** - Proper right-to-left layout implementation
-- **Context-Aware Translations** - Intelligent translation key organization
-
-### Library Integration Challenges
-- **Version Compatibility** - Resolved complex dependency conflicts
-- **TypeScript Integration** - Custom type definitions for SVG imports
-- **Router Migration** - Smooth transition to React Router v6
-- **Configuration Optimization** - Tailwind CSS RTL and custom configurations
-
-## 📋 Available Scripts
-
-- `npm run dev` - Start development server with HMR
-- `npm run build` - Build optimized production bundle
-- `npm run preview` - Preview production build locally
-- `npm run lint` - Run ESLint for code quality
-
-## 🎨 Tailwind CSS Configuration
-
-This project uses Tailwind CSS with extensive custom configuration:
-
-- **RTL Support** - Complete right-to-left layout support for Arabic
-- **Custom Animations** - Smooth transitions and loading states
-- **Responsive Design** - Mobile-first responsive utilities
-- **Custom Color Palette** - Brand-specific color schemes
-- **Component Variants** - Custom component styling patterns
-- **SVG Integration** - Optimized SVG icon handling
-
-## 📝 TypeScript Configuration
-
-The project is fully configured with TypeScript for maximum type safety:
-
-- **Strict Type Checking** - Comprehensive type validation
-- **React JSX Support** - Full React component typing
-- **Modern ES2022 Target** - Latest JavaScript features
-- **Path Mapping** - Clean import paths
-- **Custom Type Definitions** - SVG imports and component props
-- **API Type Safety** - Complete API response typing
+- Chrome: 90+
+- Firefox: 88+
+- Safari: 14+
+- Edge: 90+
