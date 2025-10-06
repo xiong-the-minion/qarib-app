@@ -139,7 +139,7 @@ export const TranscriptDetailPage: React.FC = () => {
 
   // Transform API data for display
   const participants = loadedTranscript?.speakers?.map((speaker) => ({
-    id: parseInt(speaker.id) || 0,
+    id: (speaker.id) || 0,
     name: speaker.name,
     speakingPercentage: Math.round(speaker.speaking_percentage),
     avatar: speaker.name.split(' ').map(n => n[0]).join('').toUpperCase(),
