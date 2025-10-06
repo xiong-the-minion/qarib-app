@@ -16,7 +16,7 @@ const LanguageSwitcher = () => {
         onClick={() => changeLanguage('en')}
         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
           i18n.language === 'en'
-            ? 'bg-blue-500 text-white'
+            ? 'bg-[#1D3557] text-white'
             : 'text-gray-700 hover:bg-gray-100'
         }`}
       >
@@ -26,7 +26,7 @@ const LanguageSwitcher = () => {
         onClick={() => changeLanguage('ar')}
         className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
           i18n.language === 'ar'
-            ? 'bg-blue-500 text-white'
+            ? 'bg-[#1D3557] text-white'
             : 'text-gray-700 hover:bg-gray-100'
         }`}
       >

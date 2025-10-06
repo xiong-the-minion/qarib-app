@@ -101,13 +101,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
       
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50 overflow-hidden
+        fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out rounded-xl z-50 overflow-hidden
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:z-auto
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 pb-2 ">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gray-300 rounded flex items-center justify-center">
@@ -121,27 +121,21 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             </div>
             
             {/* User Profile */}
-            <div className="flex items-center space-x-3 mb-4">
+            <div className="flex items-center space-x-3 mb-4 px-2 py-2.5 bg-gradient-to-r from-[#E9F5F6] to-white rounded-xl">
               <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">C</span>
               </div>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-gray-800 text-sm">Cameron Williamson</span>
-                  <span className="text-gray-400">⌄</span>
+                  <div className="transition-transform">
+                    {getIcon('chevron-down', 'w-4 h-4', '#9CA3AF')}
+                  </div>
                 </div>
                 <p className="text-xs text-gray-500">cameron.001@syvl.earth</p>
               </div>
             </div>
             
-            {/* Search Bar */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              />
-            </div>
           </div>
 
           {/* Navigation */}
@@ -166,8 +160,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
                       className={`
                         w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors
                         ${activeItem === item.id 
-                          ? 'bg-teal-100 text-teal-700' 
-                          : 'text-gray-700 hover:bg-gray-100'
+                          ? 'bg-[#A8DADC]/25 text-gray-900' 
+                          : 'text-gray-600 hover:bg-[#A8DADC]/15'
                         }
                       `}
                     >
@@ -212,7 +206,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             <div className="px-4 mb-4">
               <button 
                 onClick={() => navigate('/transcripts')}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
+                className="w-full bg-[#1D3557] text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition-colors"
               >
                 {getIcon('plus', 'w-4 h-4', 'white')}
                 <span>New Transcript</span>
@@ -251,7 +245,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onToggle }) => {
             </div>
 
             {/* Language Switcher at Bottom */}
-            <div className="mt-auto p-4 border-t border-gray-200">
+            <div className="mt-auto p-4 ">
               <LanguageSwitcher />
             </div>
           </div>

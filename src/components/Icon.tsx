@@ -59,7 +59,6 @@ const getFallbackIcon = (name: string): string => {
     'home': '🏠',
     'favourites': '⭐',
     'bell': '🔔',
-    'search': '🔍',
   };
   
   return iconMap[name] || '?';

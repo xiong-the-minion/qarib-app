@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
+import { BreadCrumbs } from './BreadCrumbs';
+import { useTranscript } from '../contexts/TranscriptContext';
+
+// Import icons
+import HomeIcon from '/public/icons/home.svg?react';
+import BellIcon from '/public/icons/bell.svg?react';
+import ChevronDownIcon from '/public/icons/chevron-down.svg?react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -7,13 +15,50 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+  const { loadedTranscript } = useTranscript();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Generate breadcrumbs based on current route
+  const getBreadcrumbs = () => {
+    const path = location.pathname;
+    
+    if (path === '/') {
+      return [
+        { 
+          label: 'Home', 
+          path: '/', 
+          isActive: true,
+          icon: <HomeIcon className="w-4 h-4" />
+        }
+      ];
+    } else if (path === '/transcripts') {
+      return [
+        { label: 'Home', path: '/' },
+        { label: 'Transcripts', isActive: true }
+      ];
+    } else if (path.startsWith('/transcripts/')) {
+      const transcriptId = path.split('/')[2];
+      const transcriptName = loadedTranscript?.title || `Transcript ${transcriptId}`;
+      return [
+        { label: 'Home', path: '/' },
+        { label: 'Transcripts', path: '/transcripts' },
+        { label: transcriptName, isActive: true }
+      ];
+    }
+    
+    // Default breadcrumbs
+    return [
+      { label: 'Home', path: '/' },
+      { label: 'Page', isActive: true }
+    ];
+  };
+
   return (
-    <div className="h-screen p-4 " style={{
+    <div className="h-screen p-4" style={{
       backgroundImage: 'url(/bg/app-bg.svg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
@@ -26,7 +71,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden lg:ml-0">
           {/* Top Bar */}
-          <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-3 lg:hidden">
+          <header className=" shadow-sm border-b border-gray-200 px-4 py-3 lg:hidden">
             <div className="flex items-center justify-between">
               <button
                 onClick={toggleSidebar}
@@ -40,6 +85,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <div className="w-8"></div> {/* Spacer for centering */}
             </div>
           </header>
+
+          {/* Breadcrumbs */}
+          <div className=" backdrop-blur-sm px-6 py-3 flex items-center justify-between">
+            <BreadCrumbs items={getBreadcrumbs()} />
+            {location.pathname.includes('/transcript/') ? (
+              // Bell icon for transcript detail pages
+              <button className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                <BellIcon className="w-5 h-5" />
+              </button>
+            ) : (
+              // New Transcript button for transcript list pages
+              <button className="bg-[#1D3557] text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:brightness-125 transition-colors">
+                <span>New Transcript</span>
+                <ChevronDownIcon className="w-4 h-4" />
+              </button>
+            )}
+          </div>
 
           {/* Page Content */}
           <main className="flex-1 overflow-y-auto">

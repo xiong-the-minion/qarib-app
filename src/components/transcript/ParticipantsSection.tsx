@@ -15,7 +15,7 @@ export const ParticipantsSection: React.FC<ParticipantsSectionProps> = ({ partic
   return (
     <div className="h-full flex flex-col">
       <h3 className="text-lg font-semibold text-gray-900 mb-3">Participants:</h3>
-      <div className="bg-white rounded-xl p-4 flex-1">
+      <div className="bg-white/60 rounded-xl p-4 flex-1">
         <div className="space-y-3">
           {participants.map((participant) => (
             <div key={participant.id} className="flex items-center justify-between">

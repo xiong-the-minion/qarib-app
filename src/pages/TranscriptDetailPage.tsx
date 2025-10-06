@@ -7,9 +7,11 @@ import {
   KeywordsSection,
   TranscriptSection,
 } from "../components/transcript";
+import { getDefaultTagColor, parseTranscriptContent } from "../utils/transcriptUtils";
+import { copyToClipboard, formatCompleteTranscript } from "../utils/copyUtils";
 
 // Import icons
-import BellIcon from "/public/icons/bell.svg?react";
+import CopyIcon from "/public/icons/copy.svg?react";
 
 export const TranscriptDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -83,126 +85,91 @@ export const TranscriptDetailPage: React.FC = () => {
     );
   }
 
-  // Mock data for demonstration - in real app this would come from the API
-  const mockParticipants = [
-    { id: 1, name: "Jeff Mize", speakingPercentage: 33, avatar: "JM" },
-    { id: 2, name: "Sonny Thompson", speakingPercentage: 12, avatar: "ST" },
-    { id: 3, name: "Cameron Williamson", speakingPercentage: 65, avatar: "CW" },
-    { id: 4, name: "Leon Arnoul", speakingPercentage: 34, avatar: "LA" },
-    { id: 5, name: "Clarence Ford", speakingPercentage: 4, avatar: "CF" },
-  ];
+  // Transform API data for display
+  const participants = loadedTranscript?.speakers?.map((speaker) => ({
+    id: parseInt(speaker.id) || 0,
+    name: speaker.name,
+    speakingPercentage: Math.round(speaker.speaking_percentage),
+    avatar: speaker.name.split(' ').map(n => n[0]).join('').toUpperCase(),
+  })) || [];
 
-  const mockTranscriptEntries = [
-    {
-      id: 1,
-      speaker: "Cameron Williamson",
-      timestamp: "02:07",
-      text: "Hey!",
-      avatar: "CW",
-    },
-    {
-      id: 2,
-      speaker: "Sonny Thompson",
-      timestamp: "02:07",
-      text: "yeah, it's good. I am. I talked to I met one on mobile and ended up being someone who worked in international development, and we just now are professional friends, which is fantastic, but she recommended this Zayed prize from Abu Dhabi, and apparently it's hosted by the Mazda foundation. Mazda is a smart cities, and I actually met the director of one of the directors of monster yesterday.",
-      avatar: "ST",
-    },
-    {
-      id: 3,
-      speaker: "Clarence Ford",
-      timestamp: "02:07",
-      text: "yeah, it's good. I am. I talked to I met one on mobile and ended up being someone who worked in international development, and we just now are professional friends, which is fantastic, but she recommended this Zayed prize from Abu Dhabi, and apparently it's hosted by the Mazda foundation. Mazda is a smart cities, and I actually met the director of one of the directors of monster yesterday.",
-      avatar: "CF",
-    },
-  ];
+  // Use API tags if available, otherwise show mock tags
+  const transcriptTags = loadedTranscript?.transcript_tags?.length > 0 
+    ? loadedTranscript.transcript_tags.map((tag, index) => ({
+        name: tag.name,
+        color: tag.color || getDefaultTagColor(index),
+      }))
+    : [
+        { name: "Meeting", color: getDefaultTagColor(0) },
+        { name: "Important", color: getDefaultTagColor(1) },
+        { name: "Follow-up", color: getDefaultTagColor(2) },
+      ];
 
-  const mockTags = [
-    { name: "Harvest Grant", color: "bg-green-100 text-green-800" },
-    { name: "Zayed Prize", color: "bg-blue-100 text-blue-800" },
-    { name: "Civitam Anniversary", color: "bg-orange-100 text-orange-800" },
-    { name: "Terrain Correction", color: "bg-purple-100 text-purple-800" },
-  ];
+  // Parse transcript content into entries (this is a simplified version)
+  // In a real app, you might want to store structured transcript entries in the API
+  const transcriptEntries = loadedTranscript?.content ? 
+    parseTranscriptContent(loadedTranscript.content) : [];
 
   return (
     <div className="px-12 min-h-screen">
-      {/* Top Navigation Bar */}
-      <div className="px-6 pb-4">
-        <div className="flex items-center justify-between">
-          {/* Breadcrumbs */}
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            <button
-              onClick={() => navigate("/")}
-              className="hover:text-gray-900 transition-colors"
-            >
-              Home
-            </button>
-            <span>/</span>
-            <button
-              onClick={() => navigate("/transcripts")}
-              className="hover:text-gray-900 transition-colors"
-            >
-              Transcripts
-            </button>
-            <span>/</span>
-            <span className="text-gray-900 font-medium">
-              {loadedTranscript.title}
-            </span>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center space-x-4">
-            {/* <button className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-              <span>Share</span>
-              <ChevronDownIcon className="w-4 h-4" />
-            </button> */}
-            {/* <button className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-              <span>Post in Slack</span>
-              <div className="w-4 h-4 bg-purple-600 rounded flex items-center justify-center">
-                <span className="text-white text-xs font-bold">S</span>
-              </div>
-            </button> */}
-            <button className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-              <BellIcon className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="flex flex-col gap-6 pt-[60px] pb-6 px-[120px]">
         {/* Meeting Header */}
         <div className="">
-          <div className="flex items-center justify-start gap-4">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {loadedTranscript.title}
-            </h1>
-
-            {/* Tags */}
-            <div className="flex items-center space-x-2 mb-4">
-              {mockTags.map((tag, index) => (
-                <span
-                  key={index}
-                  className={`px-1.5 py-1 rounded-sm text-xs font-medium ${tag.color}`}
-                >
-                  {tag.name}
-                </span>
-              ))}
-              <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover: transition-colors">
-                <span className="text-gray-600 text-sm">+</span>
-              </button>
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center flex-wrap gap-3">
+              <h1 className="text-3xl font-bold text-gray-900">
+                {loadedTranscript.title}
+              </h1>
+              
+              {/* Tags */}
+              <div className="flex items-center flex-wrap gap-2">
+                {transcriptTags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className={`px-1.5 py-1 rounded-sm text-xs font-medium ${tag.color}`}
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+                <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover: transition-colors">
+                  <span className="text-gray-600 text-sm">+</span>
+                </button>
+              </div>
             </div>
+
+            {/* Copy Button */}
+            <button 
+              onClick={async () => {
+                if (transcriptEntries.length > 0) {
+                  const formattedTranscript = formatCompleteTranscript(transcriptEntries);
+                  const success = await copyToClipboard(formattedTranscript);
+                  if (success) {
+                    // You could add a toast notification here
+                    console.log('Transcript copied to clipboard');
+                  }
+                }
+              }}
+              className="p-2 text-gray-700 bg-white/50 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+              title="Copy complete transcript"
+            >
+              <CopyIcon className="w-[18px] h-[18px]" />
+            </button>
           </div>
 
           {/* Meeting Info */}
           <div className="flex items-center space-x-6 text-sm text-gray-600 mb-6">
-            <div className="flex items-center space-x-2">
-              <div className="w-6 h-6  rounded-full flex items-center justify-center">
-                <span className="text-xs font-medium text-gray-700">CW</span>
+            {participants.length > 0 && (
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 rounded-full flex items-center justify-center">
+                  <span className="text-xs font-medium text-gray-700">{participants[0].avatar}</span>
+                </div>
+                <span className="text-sm text-gray-800 font-semibold">
+                  {participants[0].name}
+                </span>
               </div>
-              <span className="text-sm text-gray-800 font-semibold">
-                Cameron Williamson
-              </span>
-            </div>
+            )}
             <div className="flex items-center space-x-1">
               <svg
                 className="w-4 h-4"
@@ -217,7 +184,7 @@ export const TranscriptDetailPage: React.FC = () => {
                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              <span>May 17, 2025</span>
+              <span>{new Date(loadedTranscript.created_at).toLocaleDateString()}</span>
             </div>
             <div className="flex items-center space-x-1">
               <svg
@@ -233,7 +200,7 @@ export const TranscriptDetailPage: React.FC = () => {
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span>2:30 PM - 3:20 PM (10 min)</span>
+              <span>{loadedTranscript.status}</span>
             </div>
           </div>
 
@@ -262,12 +229,12 @@ export const TranscriptDetailPage: React.FC = () => {
 
         {/* Two Equal Sections - 50/50 Split */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[60px]">
-          <ParticipantsSection participants={mockParticipants} />
-          <KeywordsSection />
+          <ParticipantsSection participants={participants} />
+          <KeywordsSection keywords="Lorem ipsum dolor sit amet consectetur. Mi fermentum aliquet non aliquam sed. Diam tincidunt gravida sed aliquam ullamcorper cras. Nec est lorem est urna purus at." />
         </div>
 
         {/* Transcript Section - Full Width */}
-        <TranscriptSection entries={mockTranscriptEntries} />
+        <TranscriptSection entries={transcriptEntries} />
       </div>
     </div>
   );

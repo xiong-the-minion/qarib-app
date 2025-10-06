@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranscript } from '../contexts/TranscriptContext';
+import { TranscriptsTable } from '../components/TranscriptsTable';
 
 export const TranscriptsPage: React.FC = () => {
+  const navigate = useNavigate();
   const { 
     transcripts, 
     loadedTranscript, 
@@ -16,78 +19,55 @@ export const TranscriptsPage: React.FC = () => {
     loadTranscripts();
   }, [loadTranscripts]);
 
-  const handleLoadTranscript = (id: string) => {
-    loadTranscriptById(id);
+  const handleTranscriptClick = (id: string) => {
+    navigate(`/transcripts/${id}`);
   };
 
-  return (
-    <div className="p-6" style={{ 
-      fontFamily: 'monospace', 
-      backgroundColor: 'white', 
-      color: 'black',
-      minHeight: '100vh'
-    }}>
-      <div>=== TRANSCRIPTS API TEST ===</div>
-      <br />
-      
-      {/* Loading State */}
-      {isLoading && (
-        <div>
-          <div>Loading...</div>
-          <br />
+  if (isLoading) {
+    return (
+      <div className="min-h-screen  flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading transcripts...</p>
         </div>
-      )}
-
-      {/* Error State */}
-      {error && (
-        <div>
-          <div>Error:</div>
-          <pre>{JSON.stringify(error, null, 2)}</pre>
-          <br />
-        </div>
-      )}
-
-      {/* Transcripts List */}
-      <div>
-        <div>Transcripts List ({transcripts.length})</div>
-        <div onClick={() => loadTranscripts()} style={{ cursor: 'pointer', textDecoration: 'underline' }}>
-          [Refresh List]
-        </div>
-        <br />
-        
-        <div>Raw JSON Response:</div>
-        <pre style={{ whiteSpace: 'pre-wrap', fontSize: '12px' }}>
-          {JSON.stringify(transcripts, null, 2)}
-        </pre>
-        <br />
-
-        {/* Clickable transcript items */}
-        <div>Click to load details:</div>
-        {transcripts.map(transcript => (
-          <div 
-            key={transcript.id} 
-            onClick={() => handleLoadTranscript(transcript.id)}
-            style={{ 
-              cursor: 'pointer',
-              textDecoration: 'underline',
-              margin: '5px 0'
-            }}
-          >
-            {transcript.title} - {transcript.status} ({transcript.speaker_count} speakers)
-          </div>
-        ))}
-        <br />
       </div>
+    );
+  }
 
-      {/* Selected Transcript Details */}
-      {loadedTranscript && (
-        <div>
-          <div>Selected Transcript Details:</div>
-          <pre style={{ whiteSpace: 'pre-wrap', fontSize: '12px' }}>
-            {JSON.stringify(loadedTranscript, null, 2)}
-          </pre>
+  if (error) {
+    return (
+      <div className="min-h-screen  flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 text-xl mb-4">Error loading transcripts</div>
+          <p className="text-gray-600">{typeof error === 'string' ? error : error.message}</p>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  if (transcripts.length === 0) {
+    return (
+      <div className="min-h-screen  flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-gray-600 text-xl mb-4">No transcripts found</div>
+          <p className="text-gray-500 mb-6">Start by creating your first transcript</p>
+          <button 
+            onClick={() => navigate('/transcripts')}
+            className="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-800 transition-colors"
+          >
+            Create New Transcript
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen p-6">
+      <TranscriptsTable 
+        transcripts={transcripts} 
+        onTranscriptClick={handleTranscriptClick}
+      />
     </div>
   );
 };
