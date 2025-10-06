@@ -10,7 +10,6 @@ import {
 
 // Import icons
 import BellIcon from "/public/icons/bell.svg?react";
-import ChevronDownIcon from "/public/icons/chevron-down.svg?react";
 
 export const TranscriptDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -125,7 +124,7 @@ export const TranscriptDetailPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="px-12 min-h-screen">
       {/* Top Navigation Bar */}
       <div className="px-6 pb-4">
         <div className="flex items-center justify-between">
@@ -164,32 +163,34 @@ export const TranscriptDetailPage: React.FC = () => {
             </button> */}
             <button className="p-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
               <BellIcon className="w-5 h-5" />
-            </button> 
+            </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="p-6">
+      <div className="flex flex-col gap-6 pt-[60px] pb-6 px-[120px]">
         {/* Meeting Header */}
-        <div className="p-6 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            {loadedTranscript.title}
-          </h1>
+        <div className="">
+          <div className="flex items-center justify-start gap-4">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              {loadedTranscript.title}
+            </h1>
 
-          {/* Tags */}
-          <div className="flex items-center space-x-2 mb-4">
-            {mockTags.map((tag, index) => (
-              <span
-                key={index}
-                className={`px-1.5 py-1 rounded-sm text-xs font-medium ${tag.color}`}
-              >
-                {tag.name}
-              </span>
-            ))}
-            <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover: transition-colors">
-              <span className="text-gray-600 text-sm">+</span>
-            </button>
+            {/* Tags */}
+            <div className="flex items-center space-x-2 mb-4">
+              {mockTags.map((tag, index) => (
+                <span
+                  key={index}
+                  className={`px-1.5 py-1 rounded-sm text-xs font-medium ${tag.color}`}
+                >
+                  {tag.name}
+                </span>
+              ))}
+              <button className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center hover: transition-colors">
+                <span className="text-gray-600 text-sm">+</span>
+              </button>
+            </div>
           </div>
 
           {/* Meeting Info */}
@@ -237,7 +238,7 @@ export const TranscriptDetailPage: React.FC = () => {
           </div>
 
           {/* Tabs */}
-          <div className="flex space-x-8 border-b border-gray-200">
+          <div className="flex gap-3 mb-3">
             {[
               { id: "summary", label: "Summary" },
               { id: "transcript", label: "Transcript" },
@@ -246,10 +247,8 @@ export const TranscriptDetailPage: React.FC = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
-                  activeTab === tab.id
-                    ? "border-blue-500 text-blue-600"
-                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                className={`rounded-full py-2 px-4 text-xs font-semibold transition-colors ${
+                  activeTab === tab.id ? "bg-[#A8DADC]/25 text-[#1D3557]" : "bg-white/50 text-gray-500"
                 }`}
               >
                 {tab.label}
@@ -262,7 +261,7 @@ export const TranscriptDetailPage: React.FC = () => {
         <SummarySection summary={loadedTranscript.summary} />
 
         {/* Two Equal Sections - 50/50 Split */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[60px]">
           <ParticipantsSection participants={mockParticipants} />
           <KeywordsSection />
         </div>

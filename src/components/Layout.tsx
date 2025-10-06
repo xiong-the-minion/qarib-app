@@ -13,7 +13,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="h-screen p-4" style={{
+    <div className="h-screen p-4 " style={{
       backgroundImage: 'url(/bg/app-bg.svg)',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
