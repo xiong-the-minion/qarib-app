@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface Participant {
-  id: number;
+  id: string;
   name: string;
   speakingPercentage: number;
   avatar: string;
